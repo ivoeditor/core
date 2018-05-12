@@ -21,14 +21,14 @@ func New(win Window, log Logger) *Core {
 	}
 
 	return &Core{
-		log: log,
 		win: win,
+		log: log,
 	}
 }
 
 func (c *Core) Run() {
 	if err := termbox.Init(); err != nil {
-		c.log.Errorf("termbox: could not initialize: %v", err)
+		c.log.Errorf("core: could not initialize termbox: %v", err)
 		return
 	}
 	defer termbox.Close()
@@ -46,20 +46,19 @@ func (c *Core) Run() {
 
 		data := make([]byte, 32)
 
-		switch e := termbox.PollRawEvent(data); e.Type {
+		switch ev := termbox.PollRawEvent(data); ev.Type {
 		case termbox.EventRaw:
-			data := data[:e.N]
-			e := termbox.ParseEvent(data)
-			if e.Type == termbox.EventNone {
-				e.Type = termbox.EventKey
-				e.Key = termbox.KeyEsc
+			ev := termbox.ParseEvent(data[:ev.N])
+			if ev.Type == termbox.EventNone {
+				ev.Type = termbox.EventKey
+				ev.Key = termbox.KeyEsc
 			}
 
-			switch e.Type {
+			switch ev.Type {
 			case termbox.EventKey:
-				c.win.Key(c.newContext(), newKey(e))
+				c.win.Key(c.newContext(), newKey(ev))
 			case termbox.EventMouse:
-				c.win.Mouse(c.newContext(), newMouse(e))
+				c.win.Mouse(c.newContext(), newMouse(ev))
 			}
 
 		case termbox.EventResize:
@@ -69,10 +68,10 @@ func (c *Core) Run() {
 			break
 
 		case termbox.EventError:
-			c.log.Errorf("termbox: polled error event: %v", e.Err)
+			c.log.Errorf("core: polled error termbox event: %v", ev.Err)
 
 		default:
-			c.log.Errorf("termbox: polled unknown event")
+			c.log.Errorf("core: polled unknown termbox event")
 		}
 	}
 }

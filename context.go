@@ -60,6 +60,6 @@ func (ctx *context) Render() {
 	}
 
 	if err := termbox.Flush(); err != nil {
-		ctx.core.log.Errorf("termbox: failed to flush: %v", err)
+		ctx.core.log.Errorf("core: failed to flush buffer: %v", err)
 	}
 }

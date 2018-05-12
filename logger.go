@@ -19,7 +19,7 @@ type logger struct {
 
 func newLogger() *logger {
 	return &logger{
-		info: log.New(os.Stderr, "INFO ", log.LstdFlags),
+		info: log.New(os.Stderr, "INFO  ", log.LstdFlags),
 		err:  log.New(os.Stderr, "ERROR ", log.LstdFlags),
 	}
 }

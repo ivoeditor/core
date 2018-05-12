@@ -9,14 +9,14 @@ type Mouse struct {
 	Row    int
 }
 
-func newMouse(e termbox.Event) Mouse {
+func newMouse(ev termbox.Event) Mouse {
 	var m Mouse
 
-	m.Moved = e.Mod&termbox.ModMotion != 0
-	m.Col = e.MouseX
-	m.Row = e.MouseY
+	m.Moved = ev.Mod&termbox.ModMotion != 0
+	m.Col = ev.MouseX
+	m.Row = ev.MouseY
 
-	switch e.Key {
+	switch ev.Key {
 	case termbox.MouseLeft:
 		m.Action = MouseButtonLeft
 	case termbox.MouseMiddle:

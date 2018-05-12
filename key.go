@@ -12,11 +12,11 @@ type Key struct {
 	Mod  KeyMod
 }
 
-func newKey(e termbox.Event) Key {
+func newKey(ev termbox.Event) Key {
 	var key Key
 
-	if e.Ch == 0 {
-		switch e.Key {
+	if ev.Ch == 0 {
+		switch ev.Key {
 		case termbox.KeyF1:
 			key.Code = KeyCodeF1
 		case termbox.KeyF2:
@@ -159,10 +159,10 @@ func newKey(e termbox.Event) Key {
 			key.Code = KeyCodeBackspace
 		}
 	} else {
-		key.Rune = e.Ch
+		key.Rune = ev.Ch
 	}
 
-	if e.Mod&termbox.ModAlt != 0 {
+	if ev.Mod&termbox.ModAlt != 0 {
 		key.Mod |= KeyModAlt
 	}
 
