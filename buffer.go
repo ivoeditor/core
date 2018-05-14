@@ -26,7 +26,7 @@ func (buf *Buffer) Get(col, row int) *Cell {
 
 func (buf *Buffer) check(col, row int) {
 	if col >= buf.Cols || col < 0 || row >= buf.Rows || row < 0 {
-		panic("runtime error: index out of bounds")
+		panic("buffer: index out of bounds")
 	}
 }
 

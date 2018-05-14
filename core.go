@@ -14,7 +14,7 @@ type Core struct {
 
 func New(win Window, log Logger) *Core {
 	if win == nil {
-		panic("core: win is nil")
+		panic("core: window cannot be nil")
 	}
 	if log == nil {
 		log = newLogger()
