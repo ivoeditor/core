@@ -120,7 +120,7 @@ func TestProcessor(t *testing.T) {
 			time.Sleep(ev.dur)
 		}
 
-		// Close might be called before handler is executed.
+		// Close might be called before handler is processed.
 		time.Sleep(10 * time.Millisecond)
 		ex.Close()
 
