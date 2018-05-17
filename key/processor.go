@@ -5,13 +5,12 @@ import (
 	"time"
 
 	"ivoeditor.com/core"
-	"ivoeditor.com/core/executor"
 )
 
 type Processor struct {
 	Timeout time.Duration
 
-	ex executor.Executor
+	ex core.Executor
 
 	mode  string
 	modes map[string]*Map
@@ -24,7 +23,7 @@ type processorPair struct {
 	key core.Key
 }
 
-func NewProcessor(ex executor.Executor) *Processor {
+func NewProcessor(ex core.Executor) *Processor {
 	p := Processor{
 		ex:    ex,
 		modes: make(map[string]*Map),
@@ -97,7 +96,7 @@ func (p *Processor) process() {
 	}
 }
 
-func executorFunc(h Handler, ctx core.Context, keys []core.Key) executor.Func {
+func executorFunc(h Handler, ctx core.Context, keys []core.Key) func() {
 	if h == nil {
 		return func() {}
 	}

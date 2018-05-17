@@ -12,12 +12,12 @@ import (
 
 func TestProcessor(t *testing.T) {
 	tests := []struct {
-		p    func(executor.Executor) (*command.Processor, *int)
+		p    func(core.Executor) (*command.Processor, *int)
 		cmd  core.Command
 		want int
 	}{
 		{
-			p: func(ex executor.Executor) (*command.Processor, *int) {
+			p: func(ex core.Executor) (*command.Processor, *int) {
 				got := -1
 				p := command.NewProcessor(ex)
 
@@ -34,7 +34,7 @@ func TestProcessor(t *testing.T) {
 			want: 0,
 		},
 		{
-			p: func(ex executor.Executor) (*command.Processor, *int) {
+			p: func(ex core.Executor) (*command.Processor, *int) {
 				got := -1
 				p := command.NewProcessor(ex)
 

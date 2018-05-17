@@ -12,12 +12,12 @@ import (
 
 func TestProcessor(t *testing.T) {
 	tests := []struct {
-		p    func(executor.Executor) (*mouse.Processor, *int)
+		p    func(core.Executor) (*mouse.Processor, *int)
 		mse  core.Mouse
 		want int
 	}{
 		{
-			p: func(ex executor.Executor) (*mouse.Processor, *int) {
+			p: func(ex core.Executor) (*mouse.Processor, *int) {
 				got := -1
 				p := mouse.NewProcessor(ex)
 
@@ -49,7 +49,7 @@ func TestProcessor(t *testing.T) {
 			want: 0,
 		},
 		{
-			p: func(ex executor.Executor) (*mouse.Processor, *int) {
+			p: func(ex core.Executor) (*mouse.Processor, *int) {
 				got := -1
 				p := mouse.NewProcessor(ex)
 
@@ -63,7 +63,7 @@ func TestProcessor(t *testing.T) {
 			want: 0,
 		},
 		{
-			p: func(ex executor.Executor) (*mouse.Processor, *int) {
+			p: func(ex core.Executor) (*mouse.Processor, *int) {
 				got := -1
 				p := mouse.NewProcessor(ex)
 

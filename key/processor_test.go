@@ -17,13 +17,13 @@ func TestProcessor(t *testing.T) {
 	}
 
 	tests := []struct {
-		p    func(executor.Executor) (*key.Processor, *int)
+		p    func(core.Executor) (*key.Processor, *int)
 		mode string
 		evs  []event
 		want int
 	}{
 		{
-			p: func(ex executor.Executor) (*key.Processor, *int) {
+			p: func(ex core.Executor) (*key.Processor, *int) {
 				got := -1
 				p := key.NewProcessor(ex)
 				p.Timeout = 5 * time.Millisecond
@@ -53,7 +53,7 @@ func TestProcessor(t *testing.T) {
 			want: 0,
 		},
 		{
-			p: func(ex executor.Executor) (*key.Processor, *int) {
+			p: func(ex core.Executor) (*key.Processor, *int) {
 				got := -1
 				p := key.NewProcessor(executor.NewQueue())
 
@@ -70,7 +70,7 @@ func TestProcessor(t *testing.T) {
 			want: 1,
 		},
 		{
-			p: func(ex executor.Executor) (*key.Processor, *int) {
+			p: func(ex core.Executor) (*key.Processor, *int) {
 				got := -1
 				p := key.NewProcessor(executor.NewQueue())
 

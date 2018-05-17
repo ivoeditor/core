@@ -24,18 +24,7 @@ func newLogger() *logger {
 	}
 }
 
-func (l *logger) Info(v ...interface{}) {
-	l.info.Print(v)
-}
-
-func (l *logger) Infof(format string, v ...interface{}) {
-	l.info.Printf(format, v)
-}
-
-func (l *logger) Error(v ...interface{}) {
-	l.err.Print(v)
-}
-
-func (l *logger) Errorf(format string, v ...interface{}) {
-	l.err.Printf(format, v)
-}
+func (l *logger) Info(v ...interface{})                  { l.info.Print(v) }
+func (l *logger) Infof(format string, v ...interface{})  { l.info.Printf(format, v) }
+func (l *logger) Error(v ...interface{})                 { l.err.Print(v) }
+func (l *logger) Errorf(format string, v ...interface{}) { l.err.Printf(format, v) }

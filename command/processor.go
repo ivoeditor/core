@@ -2,11 +2,10 @@ package command
 
 import (
 	"ivoeditor.com/core"
-	"ivoeditor.com/core/executor"
 )
 
 type Processor struct {
-	ex    executor.Executor
+	ex    core.Executor
 	mp    *Map
 	pairs chan *processorPair
 }
@@ -16,7 +15,7 @@ type processorPair struct {
 	cmd core.Command
 }
 
-func NewProcessor(ex executor.Executor) *Processor {
+func NewProcessor(ex core.Executor) *Processor {
 	p := Processor{
 		ex:    ex,
 		pairs: make(chan *processorPair),
@@ -54,7 +53,7 @@ func (p *Processor) process() {
 	p.ex.Execute(executorFunc(handler, pair.ctx, pair.cmd))
 }
 
-func executorFunc(h Handler, ctx core.Context, cmd core.Command) executor.Func {
+func executorFunc(h Handler, ctx core.Context, cmd core.Command) func() {
 	if h == nil {
 		return func() {}
 	}

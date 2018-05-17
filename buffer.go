@@ -15,19 +15,11 @@ func newBuffer(cols, rows int) *Buffer {
 }
 
 func (buf *Buffer) Set(col, row int, c *Cell) {
-	buf.check(col, row)
 	buf.cc[col+row*buf.Cols] = c
 }
 
 func (buf *Buffer) Get(col, row int) *Cell {
-	buf.check(col, row)
 	return buf.cc[col+row*buf.Cols]
-}
-
-func (buf *Buffer) check(col, row int) {
-	if col >= buf.Cols || col < 0 || row >= buf.Rows || row < 0 {
-		panic("buffer: index out of bounds")
-	}
 }
 
 type Cell struct {

@@ -2,11 +2,10 @@ package mouse
 
 import (
 	"ivoeditor.com/core"
-	"ivoeditor.com/core/executor"
 )
 
 type Processor struct {
-	ex    executor.Executor
+	ex    core.Executor
 	mp    *Map
 	pairs chan *processorPair
 }
@@ -16,7 +15,7 @@ type processorPair struct {
 	mse core.Mouse
 }
 
-func NewProcessor(ex executor.Executor) *Processor {
+func NewProcessor(ex core.Executor) *Processor {
 	p := Processor{
 		ex:    ex,
 		pairs: make(chan *processorPair),
@@ -54,7 +53,7 @@ func (p *Processor) process() {
 	p.ex.Execute(executorFunc(handler, pair.ctx, pair.mse))
 }
 
-func executorFunc(h Handler, ctx core.Context, mse core.Mouse) executor.Func {
+func executorFunc(h Handler, ctx core.Context, mse core.Mouse) func() {
 	if h == nil {
 		return func() {}
 	}

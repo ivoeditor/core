@@ -18,7 +18,7 @@ func (c *Concurrent) Close() {
 	c.close.Wait()
 }
 
-func (c *Concurrent) Execute(f Func) {
+func (c *Concurrent) Execute(f func()) {
 	if c.closing {
 		return
 	}

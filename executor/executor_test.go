@@ -5,18 +5,19 @@ import (
 	"testing"
 	"time"
 
+	"ivoeditor.com/core"
 	"ivoeditor.com/core/executor"
 )
 
 func TestExecutor(t *testing.T) {
 	tests := []struct {
-		exec  executor.Executor
-		funcs []executor.Func
+		ex    core.Executor
+		funcs []func()
 		want  []int
 	}{
 		{
-			exec: executor.NewQueue(),
-			funcs: []executor.Func{
+			ex: executor.NewQueue(),
+			funcs: []func(){
 				func() {},
 				func() {},
 				func() {},
@@ -26,8 +27,8 @@ func TestExecutor(t *testing.T) {
 			want: []int{0, 1, 2, 3, 4},
 		},
 		{
-			exec: executor.NewConcurrent(),
-			funcs: []executor.Func{
+			ex: executor.NewConcurrent(),
+			funcs: []func(){
 				func() { time.Sleep(4 * time.Millisecond) },
 				func() { time.Sleep(2 * time.Millisecond) },
 				func() { time.Sleep(8 * time.Millisecond) },
@@ -43,13 +44,13 @@ func TestExecutor(t *testing.T) {
 
 		for i, f := range test.funcs {
 			j, g := i, f
-			test.exec.Execute(func() {
+			test.ex.Execute(func() {
 				g()
 				got = append(got, j)
 			})
 		}
 
-		test.exec.Close()
+		test.ex.Close()
 
 		if !reflect.DeepEqual(test.want, got) {
 			t.Errorf("test %d: want %v, got %v", i, test.want, got)

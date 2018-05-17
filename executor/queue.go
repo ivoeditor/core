@@ -46,7 +46,7 @@ func (q *Queue) Close() {
 	q.close.Wait()
 }
 
-func (q *Queue) Execute(f Func) {
+func (q *Queue) Execute(f func()) {
 	if q.closing {
 		return
 	}
@@ -57,7 +57,7 @@ func (q *Queue) Execute(f Func) {
 
 func (q *Queue) execute() {
 	for {
-		(<-q.funcsOut).(Func)()
+		(<-q.funcsOut).(func())()
 		q.close.Done()
 	}
 }

@@ -6,24 +6,37 @@ import (
 
 type Core struct {
 	quit bool
+	ex   Executor
 	win  Window
 	log  Logger
 	ctx  *context
 	cmd  *Command
 }
 
-func New(win Window, log Logger) *Core {
-	if win == nil {
-		panic("core: window cannot be nil")
-	}
-	if log == nil {
-		log = newLogger()
+func New() *Core {
+	c := Core{
+		ex:  newExecutor(),
+		log: newLogger(),
 	}
 
-	return &Core{
-		win: win,
-		log: log,
+	c.ctx = &context{
+		core: &c,
+		buf:  newBuffer(0, 0),
 	}
+
+	return &c
+}
+
+func (c *Core) SetExecutor(ex Executor) {
+	c.ex = ex
+}
+
+func (c *Core) SetWindow(win Window) {
+	c.win = win
+}
+
+func (c *Core) SetLogger(log Logger) {
+	c.log = log
 }
 
 func (c *Core) Run() {
@@ -33,14 +46,19 @@ func (c *Core) Run() {
 	}
 	defer termbox.Close()
 
+	if c.win == nil {
+		panic("core: window cannot be nil")
+	}
 	defer c.win.Close(c.newContext())
+
+	defer c.ex.Close()
 
 	termbox.SetInputMode(termbox.InputAlt | termbox.InputMouse)
 	termbox.SetOutputMode(termbox.OutputNormal)
 
 	for !c.quit {
 		if c.cmd != nil {
-			c.win.Command(c.newContext(), *c.cmd)
+			c.ex.Execute(func() { c.win.Command(c.newContext(), *c.cmd) })
 			c.cmd = nil
 		}
 
@@ -56,13 +74,13 @@ func (c *Core) Run() {
 
 			switch ev.Type {
 			case termbox.EventKey:
-				c.win.Key(c.newContext(), newKey(ev))
+				c.ex.Execute(func() { c.win.Key(c.newContext(), newKey(ev)) })
 			case termbox.EventMouse:
-				c.win.Mouse(c.newContext(), newMouse(ev))
+				c.ex.Execute(func() { c.win.Mouse(c.newContext(), newMouse(ev)) })
 			}
 
 		case termbox.EventResize:
-			c.win.Resize(c.newContext())
+			c.ex.Execute(func() { c.win.Resize(c.newContext()) })
 
 		case termbox.EventInterrupt:
 			break
