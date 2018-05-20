@@ -5,27 +5,14 @@ import (
 )
 
 type Processor struct {
-	ex    core.Executor
-	mp    *Map
-	pairs chan *processorPair
-}
-
-type processorPair struct {
-	ctx core.Context
-	mse core.Mouse
+	ex core.Executor
+	mp *Map
 }
 
 func NewProcessor(ex core.Executor) *Processor {
 	p := Processor{
-		ex:    ex,
-		pairs: make(chan *processorPair),
+		ex: ex,
 	}
-
-	go func() {
-		for {
-			p.process()
-		}
-	}()
 
 	return &p
 }
@@ -35,22 +22,13 @@ func (p *Processor) SetMap(mp *Map) {
 }
 
 func (p *Processor) Process(ctx core.Context, mse core.Mouse) {
-	p.pairs <- &processorPair{
-		ctx: ctx,
-		mse: mse,
-	}
-}
-
-func (p *Processor) process() {
-	pair := <-p.pairs
-
-	handler, ok := p.mp.get(pair.mse)
+	handler, ok := p.mp.get(mse)
 	if !ok {
-		pair.ctx.Logger().Infof("mouse: did not find mapping for %v", pair.mse)
+		ctx.Logger().Infof("mouse: did not find mapping for %v", mse)
 		return
 	}
 
-	p.ex.Execute(executorFunc(handler, pair.ctx, pair.mse))
+	p.ex.Execute(executorFunc(handler, ctx, mse))
 }
 
 func executorFunc(h Handler, ctx core.Context, mse core.Mouse) func() {
