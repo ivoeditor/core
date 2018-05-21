@@ -60,6 +60,7 @@ func (p *Processor) Process(ctx core.Context, key core.Key) {
 
 func (p *Processor) process() {
 	var (
+		mp      = p.modes[p.mode]
 		ctx     core.Context
 		keys    []core.Key
 		handler Handler
@@ -78,8 +79,6 @@ func (p *Processor) process() {
 		case <-time.After(dur):
 			p.ex.Execute(executorFunc(handler, ctx, keys))
 		}
-
-		mp := p.modes[p.mode]
 
 		var more, ok bool
 		handler, more, ok = mp.get(keys)
