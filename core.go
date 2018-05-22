@@ -1,8 +1,12 @@
 package core
 
 import (
+	"time"
+
 	termbox "github.com/nsf/termbox-go"
 )
+
+const escWaitDuration = 10 * time.Millisecond
 
 type Core struct {
 	quit bool
@@ -53,7 +57,7 @@ func (c *Core) Run() {
 
 	defer c.ex.Close()
 
-	termbox.SetInputMode(termbox.InputAlt | termbox.InputMouse)
+	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 	termbox.SetOutputMode(termbox.OutputNormal)
 
 	for !c.quit {
@@ -62,22 +66,25 @@ func (c *Core) Run() {
 			c.cmd = nil
 		}
 
-		data := make([]byte, 32)
+		switch ev := termbox.PollEvent(); ev.Type {
+		case termbox.EventKey:
+			if ev.Ch == 0 && ev.Key == termbox.KeyEsc {
+				next := make(chan termbox.Event, 1)
+				go func() {
+					next <- termbox.PollEvent()
+				}()
 
-		switch ev := termbox.PollRawEvent(data); ev.Type {
-		case termbox.EventRaw:
-			ev := termbox.ParseEvent(data[:ev.N])
-			if ev.Type == termbox.EventNone {
-				ev.Type = termbox.EventKey
-				ev.Key = termbox.KeyEsc
+				select {
+				case ev = <-next:
+					ev.Mod |= termbox.ModAlt
+				case <-time.After(escWaitDuration):
+					break
+				}
 			}
+			c.ex.Execute(func() { c.win.Key(c.newContext(), newKey(ev)) })
 
-			switch ev.Type {
-			case termbox.EventKey:
-				c.ex.Execute(func() { c.win.Key(c.newContext(), newKey(ev)) })
-			case termbox.EventMouse:
-				c.ex.Execute(func() { c.win.Mouse(c.newContext(), newMouse(ev)) })
-			}
+		case termbox.EventMouse:
+			c.ex.Execute(func() { c.win.Mouse(c.newContext(), newMouse(ev)) })
 
 		case termbox.EventResize:
 			c.ex.Execute(func() { c.win.Resize(c.newContext()) })
@@ -86,10 +93,10 @@ func (c *Core) Run() {
 			break
 
 		case termbox.EventError:
-			c.log.Errorf("core: polled error termbox event: %v", ev.Err)
+			c.log.Errorf("core: polled termbox error event: %v", ev.Err)
 
 		default:
-			c.log.Errorf("core: polled unknown termbox event")
+			c.log.Errorf("core: polled termbox unknown event")
 		}
 	}
 }
